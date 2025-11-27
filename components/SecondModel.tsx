@@ -1,14 +1,16 @@
 import * as THREE from "three";
-import { useGLTF, useMask } from "@react-three/drei";
-import { ShirtType, TextureKey } from "@/lib/textures";
-import { useShirtSectionTextures } from "@/lib/useTextures";
-import { createMaterials } from "@/lib/material";
+import { Box, useGLTF } from "@react-three/drei";
+import { ShirtType } from "@/lib/textures";
+// import { useShirtSectionTextures } from "@/lib/useTextures";
+// import { createMaterials } from "@/lib/material";
 import { useGSAP } from "@gsap/react";
 import { RefObject, useRef } from "react";
 import gsap from "gsap";
 import { shirtColors } from "@/lib/colors";
 import { useMediaQuery } from "react-responsive";
 import { Phone } from "./Phone";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import FloatingParticles from "./FloatingParticles";
 
 type GLTFResult = {
   nodes: {
@@ -19,38 +21,39 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
   const { nodes } = useGLTF(
     "/models/ShirtScrolling.glb"
   ) as unknown as GLTFResult;
-  const stencil = useMask(1, true);
+  // const stencil = useMask(1, true);
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const textures = useShirtSectionTextures(shirtType, "second");
-  const mats = createMaterials(textures, stencil) as Record<
-    TextureKey<typeof shirtType, "second">,
-    THREE.MeshBasicMaterial
-  >;
+  // const textures = useShirtSectionTextures(shirtType, "second");
+  // const mats = createMaterials(textures, stencil) as Record<
+  //   TextureKey<typeof shirtType, "second">,
+  //   THREE.MeshBasicMaterial
+  // >;
 
-  const marqueeText1Ref = useRef<THREE.Mesh>(null);
-  const marqueeText1DupRef = useRef<THREE.Mesh>(null);
-  const marqueeText2Ref = useRef<THREE.Mesh>(null);
-  const marqueeText2DupRef = useRef<THREE.Mesh>(null);
+  // const marqueeText1Ref = useRef<THREE.Mesh>(null);
+  // const marqueeText1DupRef = useRef<THREE.Mesh>(null);
+  // const marqueeText2Ref = useRef<THREE.Mesh>(null);
+  // const marqueeText2DupRef = useRef<THREE.Mesh>(null);
 
   const groupRef = useRef<THREE.Group>(null);
   const textsRef = useRef<THREE.Group>(null);
+  const boxMaterialsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 
   const getTextColor = () => shirtColors[shirtType]?.text ?? "black";
   const textsMaterial = new THREE.MeshBasicMaterial({
     color: getTextColor(),
     transparent: true,
     opacity: 1,
-    ...stencil,
+    // ...stencil,
   });
-  const marqueeMaterial = new THREE.MeshBasicMaterial({
-    color: getTextColor(),
-    transparent: true,
-    opacity: 0,
-    ...stencil,
-  });
-  const TOP_BOTTOM_TEXT_WIDTH = 5.7;
-  const MIDDLE_TEXT_WIDTH = 6.2;
-  const DURATION = 50;
+  // const marqueeMaterial = new THREE.MeshBasicMaterial({
+  //   color: getTextColor(),
+  //   transparent: true,
+  //   opacity: 0,
+  //   ...stencil,
+  // });
+  // const TOP_BOTTOM_TEXT_WIDTH = 5.7;
+  // const MIDDLE_TEXT_WIDTH = 6.2;
+  // const DURATION = 50;
 
   useGSAP(() => {
     if (!groupRef.current) return;
@@ -68,48 +71,58 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
       .to(groupRef.current.rotation, { x: 0, duration: 0.2 })
       .to(groupRef.current.position, { y: 0.7, duration: 0.8 }, "<")
       .to(groupRef.current.rotation, { y: -Math.PI * 2, duration: 0.8 }, "<")
-      .to(groupRef.current.scale, { x: 1, y: 1, z: 1, duration: 0.1 })
+
+      .to(boxMaterialsRef.current, {
+        opacity: 0,
+        emissiveIntensity: 0,
+        duration: 0.1,
+        ease: "power2.out",
+      })
+      .to(groupRef.current.scale, { x: 1, y: 1, z: 1, duration: 0.1 }, "<")
+      .to(particlesMaterialRef.current, { opacity: 0, duration: 0.1 }, "<")
       .to(textsMaterial, { opacity: 0, duration: 0.05 }, "<")
-      .to(marqueeMaterial, { opacity: 0.1, duration: 0.05 }, "<")
+      // .to(marqueeMaterial, { opacity: 0.1, duration: 0.05 }, "<")
       .to(groupRef.current.position, { y: 0.7 })
       .add(animateTexts(textsRef).duration(0.5), 0);
   }, []);
 
   //marquee animation
-  useGSAP(() => {
-    if (
-      !marqueeText1Ref.current ||
-      !marqueeText1DupRef.current ||
-      !marqueeText2Ref.current ||
-      !marqueeText2DupRef.current
-    )
-      return;
+  // useGSAP(() => {
+  //   if (
+  //     !marqueeText1Ref.current ||
+  //     !marqueeText1DupRef.current ||
+  //     !marqueeText2Ref.current ||
+  //     !marqueeText2DupRef.current
+  //   )
+  //     return;
 
-    gsap.to(marqueeText1Ref.current.position, {
-      x: `-=${TOP_BOTTOM_TEXT_WIDTH}`,
-      duration: DURATION,
-      ease: "none",
-      repeat: -1,
-    });
-    gsap.to(marqueeText1DupRef.current.position, {
-      x: `-=${TOP_BOTTOM_TEXT_WIDTH}`,
-      duration: DURATION,
-      ease: "none",
-      repeat: -1,
-    });
-    gsap.to(marqueeText2Ref.current.position, {
-      x: `+=${MIDDLE_TEXT_WIDTH}`,
-      duration: DURATION,
-      ease: "none",
-      repeat: -1,
-    });
-    gsap.to(marqueeText2DupRef.current.position, {
-      x: `+=${MIDDLE_TEXT_WIDTH}`,
-      duration: DURATION,
-      ease: "none",
-      repeat: -1,
-    });
-  });
+  //   gsap.to(marqueeText1Ref.current.position, {
+  //     x: `-=${TOP_BOTTOM_TEXT_WIDTH}`,
+  //     duration: DURATION,
+  //     ease: "none",
+  //     repeat: -1,
+  //   });
+  //   gsap.to(marqueeText1DupRef.current.position, {
+  //     x: `-=${TOP_BOTTOM_TEXT_WIDTH}`,
+  //     duration: DURATION,
+  //     ease: "none",
+  //     repeat: -1,
+  //   });
+  //   gsap.to(marqueeText2Ref.current.position, {
+  //     x: `+=${MIDDLE_TEXT_WIDTH}`,
+  //     duration: DURATION,
+  //     ease: "none",
+  //     repeat: -1,
+  //   });
+  //   gsap.to(marqueeText2DupRef.current.position, {
+  //     x: `+=${MIDDLE_TEXT_WIDTH}`,
+  //     duration: DURATION,
+  //     ease: "none",
+  //     repeat: -1,
+  //   });
+  // });
+
+  const particlesMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
 
   const animateTexts = (textsRef: RefObject<THREE.Group | null>) => {
     if (!textsRef.current) return gsap.timeline();
@@ -139,15 +152,73 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
       rotation={[Math.PI / 8, Math.PI / 3, 0]}
       position-y={0.1}
     >
-      <mesh
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0}
+          intensity={1}
+          luminanceSmoothing={0.9}
+          // height={300}
+        />
+      </EffectComposer>
+      {/* <mesh
         visible={false}
         geometry={nodes.Shirt.geometry}
         material={mats.shirt}
-      />
+      /> */}
+      <FloatingParticles count={200} materialRef={particlesMaterialRef} />
+      {[
+        [-4, 0, -2],
+        [-3, -1, 2],
+        [-2.5, 1, 2],
+        [-3.5, 0, 1],
+        [-5, 0, -2],
+        [-5.6, -1, 2],
+        [-4.2, 1, 2],
+        [-6, 0, 1],
+        [-6, 1, 1],
+        [-6, 2, 1],
+        [1, 0, 2],
+        [1, 1, 2],
+        [1, 2, 2],
+        [2, 0, 1],
+        [2, -1, 1],
+        [2, 0, 3],
+        [4, 0, 4],
+        [-1, 0.6, 1.5],
+        [-1, 0, -2],
+        [2, 0, -2],
+        [4, 0, -2],
+        [4, -1, 0],
+        [3, -1, 0],
+        [4, 0, 0],
+        [2, 0.6, 0],
+        [1, 0, -1],
+        [0.5, 0, -8],
+        [-0.5, 0, -6],
+        [0, -1, -4],
+      ].map((elem, index) => {
+        return (
+          <Box
+            key={index}
+            position={[elem[0], elem[1], elem[2]]}
+            args={[0.01, 1, 0.01]}
+          >
+            <meshStandardMaterial
+              ref={(mat) => {
+                if (mat) boxMaterialsRef.current[index] = mat;
+              }}
+              color="red"
+              emissive="red"
+              emissiveIntensity={150}
+              transparent
+            />
+          </Box>
+        );
+      })}
       <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={4} dispose={null}>
         <Phone stencilIndex={0} />
       </group>
-      <mesh geometry={nodes.Sphere_ENV.geometry} material={mats.sphere} />
+      {/* <mesh geometry={nodes.Sphere_ENV.geometry} material={mats.sphere} /> */}
 
       <group ref={textsRef}>
         {Object.entries(nodes)
@@ -161,7 +232,7 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
             />
           ))}
       </group>
-      <mesh
+      {/* <mesh
         ref={marqueeText1Ref}
         geometry={nodes.Marquee_Top_Bottom.geometry}
         material={marqueeMaterial}
@@ -184,7 +255,7 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
         geometry={nodes.Marquee_Middle.geometry}
         material={marqueeMaterial}
         position={[-MIDDLE_TEXT_WIDTH, 0, 0]}
-      />
+      /> */}
     </group>
   );
 }

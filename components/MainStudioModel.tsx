@@ -85,7 +85,7 @@ export function MainStudioModel({
         sessionStorage.setItem("mainStudioAnimationRan", "true");
       },
     });
-    meshRefs.current.forEach((shirt, i) => {
+    meshRefs.current.forEach((shirt) => {
       if (!shirt) return;
       gsap.from(shirt.position, {
         x: shirt.position.x * 2,
