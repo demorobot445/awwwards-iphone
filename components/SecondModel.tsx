@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Box, useGLTF } from "@react-three/drei";
+import { Box, GradientTexture, useGLTF } from "@react-three/drei";
 import { ShirtType } from "@/lib/textures";
 // import { useShirtSectionTextures } from "@/lib/useTextures";
 // import { createMaterials } from "@/lib/material";
@@ -207,11 +207,17 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
               ref={(mat) => {
                 if (mat) boxMaterialsRef.current[index] = mat;
               }}
-              color="red"
+              // color="red"
               emissive="red"
               emissiveIntensity={150}
               transparent
-            />
+            >
+              <GradientTexture
+                stops={[0, 1]}
+                colors={["red", "white"]}
+                size={1024}
+              />
+            </meshStandardMaterial>
           </Box>
         );
       })}
