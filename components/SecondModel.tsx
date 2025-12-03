@@ -52,7 +52,7 @@ export function SecondModel({
 
   const getTextColor = () => shirtColors[shirtType]?.text ?? "black";
   const textsMaterial = new THREE.MeshBasicMaterial({
-    color: getTextColor(),
+    color: "white",
     transparent: true,
     opacity: 1,
     // ...stencil,
@@ -198,7 +198,7 @@ export function SecondModel({
         <group
           ref={mobileRef}
           position={[0, 0.25, 0]}
-          rotation={[Math.PI * 0.45, -Math.PI * 0.08, Math.PI * 1.82]}
+          rotation={[Math.PI * 0.45, -Math.PI * 0.08, Math.PI * 0.82]}
           scale={4}
           dispose={null}
         >
