@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 const MusicStreamLine = ({ color }: { color: string }) => {
   const [isPlay, setIsPlay] = useState(false);
-  const [isFirstInteraction, setIsFirstInteraction] = useState(false);
+  // const [isFirstInteraction, setIsFirstInteraction] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -53,7 +53,7 @@ const MusicStreamLine = ({ color }: { color: string }) => {
   useEffect(() => {
     const handleFirstClick = () => {
       setIsPlay(true);
-      setIsFirstInteraction(true);
+      // setIsFirstInteraction(true);
       window.removeEventListener("click", handleFirstClick);
     };
     window.addEventListener("click", handleFirstClick);
@@ -63,7 +63,7 @@ const MusicStreamLine = ({ color }: { color: string }) => {
 
   return (
     <>
-      {!isFirstInteraction && (
+      {/* {!isFirstInteraction && (
         <div
           className={clsx(
             "fixed inset-0 flex flex-col items-center justify-end bottom-2 transition-opacity duration-700 animate-pulse",
@@ -79,7 +79,7 @@ const MusicStreamLine = ({ color }: { color: string }) => {
             CLICK TO ENABLE SOUND
           </p>
         </div>
-      )}
+      )} */}
       <div
         onClick={() => setIsPlay(!isPlay)}
         className="flex justify-center items-center size-7 hover-animation"

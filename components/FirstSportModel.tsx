@@ -41,7 +41,7 @@ export function FirstSportModel() {
           scale={5.2}
           dispose={null}
         >
-          <Phone stencilIndex={1} />
+          <Phone />
         </group>
         <mesh
           visible={false}

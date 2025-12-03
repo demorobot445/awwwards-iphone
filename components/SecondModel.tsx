@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Box, GradientTexture, useGLTF } from "@react-three/drei";
+import { Plane, useGLTF, useTexture } from "@react-three/drei";
 import { ShirtType } from "@/lib/textures";
 // import { useShirtSectionTextures } from "@/lib/useTextures";
 // import { createMaterials } from "@/lib/material";
@@ -11,16 +11,25 @@ import { useMediaQuery } from "react-responsive";
 import { Phone } from "./Phone";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import FloatingParticles from "./FloatingParticles";
+import BGLights from "./BGLights";
+import Mise from "./Mise";
 
 type GLTFResult = {
   nodes: {
     [name: string]: THREE.Mesh;
   };
 };
-export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
-  const { nodes } = useGLTF(
-    "/models/ShirtScrolling.glb"
-  ) as unknown as GLTFResult;
+export function SecondModel({
+  shirtType,
+  htmlRef,
+}: {
+  shirtType: ShirtType;
+  htmlRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  // const { nodes } = useGLTF(
+  //   "/models/ShirtScrolling.glb"
+  // ) as unknown as GLTFResult;
+  const { nodes } = useGLTF("/models/scrollText.glb") as unknown as GLTFResult;
   // const stencil = useMask(1, true);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   // const textures = useShirtSectionTextures(shirtType, "second");
@@ -35,6 +44,9 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
   // const marqueeText2DupRef = useRef<THREE.Mesh>(null);
 
   const groupRef = useRef<THREE.Group>(null);
+  const mobileRef = useRef<THREE.Group>(null);
+  const logoRef = useRef<THREE.Mesh>(null);
+  const logoMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const textsRef = useRef<THREE.Group>(null);
   const boxMaterialsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 
@@ -62,16 +74,19 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
         scrollTrigger: {
           trigger: "#second-section",
           start: "top top",
-          end: "600% top",
+          end: "1000% top",
           scrub: 1,
           pin: true,
           // markers: true,
         },
       })
-      .to(groupRef.current.rotation, { x: 0, duration: 0.2 })
+      .to(mobileRef.current!.position, { y: 0 })
+      .to(mobileRef.current!.rotation, { x: 0, y: 0, z: 0 }, "<")
+      .to(logoRef.current!.scale, { x: 0, y: 0, z: 0, duration: 0.2 }, "<")
+      .to(logoMatRef.current, { opacity: 0, duration: 0.2 }, "<")
+      .to(groupRef.current.rotation, { x: 0, duration: 0.2 }, "<")
       .to(groupRef.current.position, { y: 0.7, duration: 0.8 }, "<")
-      .to(groupRef.current.rotation, { y: -Math.PI * 2, duration: 0.8 }, "<")
-
+      .to(groupRef.current.rotation, { y: -Math.PI * 3, duration: 0.8 }, "<")
       .to(boxMaterialsRef.current, {
         opacity: 0,
         emissiveIntensity: 0,
@@ -82,9 +97,37 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
       .to(particlesMaterialRef.current, { opacity: 0, duration: 0.1 }, "<")
       .to(textsMaterial, { opacity: 0, duration: 0.05 }, "<")
       // .to(marqueeMaterial, { opacity: 0.1, duration: 0.05 }, "<")
-      .to(groupRef.current.position, { y: 0.7 })
-      .add(animateTexts(textsRef).duration(0.5), 0);
+      // .to(groupRef.current.position, { y: 0.7 })
+
+      .add(animateTexts(textsRef).duration(0.5), 0)
+      .to(htmlRef.current, {
+        top: -htmlRef.current!.offsetHeight + innerHeight,
+      })
+      .set(mobileRef.current!.scale, { x: 0, y: 0, z: 0 }, "<0.2");
   }, []);
+
+  const particlesMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
+
+  const animateTexts = (textsRef: RefObject<THREE.Group | null>) => {
+    if (!textsRef.current) return gsap.timeline();
+    const meshes = textsRef.current.children as THREE.Mesh[];
+
+    const tl = gsap.timeline();
+    meshes.forEach((mesh, i) => {
+      tl.from(
+        mesh.scale,
+        { x: 0, y: 0, z: 0, duration: 1, ease: "circ.out" },
+        i * 0.1
+      );
+      tl.from(
+        mesh.position,
+        { y: "+=0.04", duration: 1, ease: "back.out" },
+        i * 0.1
+      );
+    });
+
+    return tl;
+  };
 
   //marquee animation
   // useGSAP(() => {
@@ -122,123 +165,74 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
   //   });
   // });
 
-  const particlesMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
-
-  const animateTexts = (textsRef: RefObject<THREE.Group | null>) => {
-    if (!textsRef.current) return gsap.timeline();
-    const meshes = textsRef.current.children as THREE.Mesh[];
-
-    const tl = gsap.timeline();
-    meshes.forEach((mesh, i) => {
-      tl.from(
-        mesh.scale,
-        { x: 0, y: 0, z: 0, duration: 1, ease: "circ.out" },
-        i * 0.1
-      );
-      tl.from(
-        mesh.position,
-        { y: "+=0.04", duration: 1, ease: "back.out" },
-        i * 0.1
-      );
-    });
-
-    return tl;
-  };
   return (
-    <group
-      ref={groupRef}
-      dispose={null}
-      scale={isMobile ? 1.5 : 2.2}
-      rotation={[Math.PI / 8, Math.PI / 3, 0]}
-      position-y={0.1}
-    >
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0}
-          intensity={1}
-          luminanceSmoothing={0.9}
-          // height={300}
+    <>
+      <Plane ref={logoRef} position-y={0.7} scale={0.8} args={[1.5, 0.33]}>
+        <meshBasicMaterial
+          ref={logoMatRef}
+          map={useTexture("/full-logo.png")}
+          transparent
+          side={THREE.DoubleSide}
         />
-      </EffectComposer>
-      {/* <mesh
-        visible={false}
-        geometry={nodes.Shirt.geometry}
-        material={mats.shirt}
-      /> */}
-      <FloatingParticles count={200} materialRef={particlesMaterialRef} />
-      {[
-        [-4, 0, -2],
-        [-3, -1, 2],
-        [-2.5, 1, 2],
-        [-3.5, 0, 1],
-        [-5, 0, -2],
-        [-5.6, -1, 2],
-        [-4.2, 1, 2],
-        [-6, 0, 1],
-        [-6, 1, 1],
-        [-6, 2, 1],
-        [1, 0, 2],
-        [1, 1, 2],
-        [1, 2, 2],
-        [2, 0, 1],
-        [2, -1, 1],
-        [2, 0, 3],
-        [4, 0, 4],
-        [-1, 0.6, 1.5],
-        [-1, 0, -2],
-        [2, 0, -2],
-        [4, 0, -2],
-        [4, -1, 0],
-        [3, -1, 0],
-        [4, 0, 0],
-        [2, 0.6, 0],
-        [1, 0, -1],
-        [0.5, 0, -8],
-        [-0.5, 0, -6],
-        [0, -1, -4],
-      ].map((elem, index) => {
-        return (
-          <Box
-            key={index}
-            position={[elem[0], elem[1], elem[2]]}
-            args={[0.01, 1, 0.01]}
-          >
-            <meshStandardMaterial
-              ref={(mat) => {
-                if (mat) boxMaterialsRef.current[index] = mat;
-              }}
-              // color="red"
-              emissive="red"
-              emissiveIntensity={150}
-              transparent
-            >
-              <GradientTexture
-                stops={[0, 1]}
-                colors={["red", "white"]}
-                size={1024}
-              />
-            </meshStandardMaterial>
-          </Box>
-        );
-      })}
-      <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={4} dispose={null}>
-        <Phone stencilIndex={0} />
-      </group>
-      {/* <mesh geometry={nodes.Sphere_ENV.geometry} material={mats.sphere} /> */}
+      </Plane>
 
-      <group ref={textsRef}>
-        {Object.entries(nodes)
-          .filter(([key]) => key.startsWith("Texts"))
-          .map(([key, node]) => (
-            <mesh
-              key={key}
-              geometry={node.geometry}
-              material={textsMaterial}
-              position={node.position}
-            />
-          ))}
-      </group>
-      {/* <mesh
+      <group
+        ref={groupRef}
+        dispose={null}
+        scale={isMobile ? 1.5 : 2.2}
+        rotation={[Math.PI / 8, Math.PI / 3, 0]}
+        position-y={-0.1}
+      >
+        <EffectComposer>
+          <Bloom
+            luminanceThreshold={0}
+            intensity={1}
+            luminanceSmoothing={0.9}
+          />
+        </EffectComposer>
+
+        <FloatingParticles count={200} materialRef={particlesMaterialRef} />
+        <BGLights boxMaterialsRef={boxMaterialsRef} />
+        <Mise />
+
+        <group
+          ref={mobileRef}
+          position={[0, 0.25, 0]}
+          rotation={[Math.PI * 0.45, -Math.PI * 0.08, Math.PI * 1.82]}
+          scale={4}
+          dispose={null}
+        >
+          <Phone />
+        </group>
+        {/* <mesh geometry={nodes.Sphere_ENV.geometry}>
+          <meshStandardMaterial
+            side={THREE.DoubleSide}
+            // map={useTexture(
+            //   "/textures/sport/second/Sport_Sphere_Env_Baked_Texture.webp"
+            // )}
+          />
+        </mesh> */}
+
+        <group ref={textsRef}>
+          {Object.entries(nodes)
+            .filter(
+              ([key]) =>
+                key.startsWith("heading") || key.startsWith("paragraph")
+            )
+            .map(([key, node]) => {
+              return (
+                <mesh
+                  key={key}
+                  geometry={node.geometry}
+                  material={textsMaterial}
+                  position={node.position}
+                  rotation={node.rotation}
+                  scale={node.scale}
+                />
+              );
+            })}
+        </group>
+        {/* <mesh
         ref={marqueeText1Ref}
         geometry={nodes.Marquee_Top_Bottom.geometry}
         material={marqueeMaterial}
@@ -262,6 +256,7 @@ export function SecondModel({ shirtType }: { shirtType: ShirtType }) {
         material={marqueeMaterial}
         position={[-MIDDLE_TEXT_WIDTH, 0, 0]}
       /> */}
-    </group>
+      </group>
+    </>
   );
 }

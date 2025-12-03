@@ -1,21 +1,21 @@
-"use client";
-import clsx from "clsx";
-import { useParams } from "next/navigation";
+import Image from "next/image";
 
 const Footer = () => {
-  const color = useParams()?.slug === "white" ? "text-black" : "text-white";
   return (
-    <div
-      className={clsx(
-        "fixed flex justify-start items-center md:gap-5 gap-2 bottom-2 md:px-20 px-5 md:text-xs text-[10px] md:tracking-widest text-nowrap",
-        color
-      )}
-    >
-      <p className="hover-animation">© 2025 IPHONE AG</p>
-      <p className="hover-animation">TERMS & CONDITIONS</p>
-      <p className="hover-animation">PRIVACY</p>
-      <p className="hover-animation">COOKIES</p>
-    </div>
+    <footer className="relative z-20 flex flex-col py-[46px]">
+      <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-center px-4 md:px-0">
+        <Image
+          className="my-10 h-auto w-[60%] object-contain md:my-28"
+          src="/full-logo.png"
+          alt="3d-text"
+          width={1366}
+          height={689}
+        />
+      </div>
+      <p className="text-bold w-full cursor-pointer text-center text-xs md:text-base text-white">
+        CLIQUE APPS &copy; {new Date().getFullYear()}
+      </p>
+    </footer>
   );
 };
 
