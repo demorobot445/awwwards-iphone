@@ -4,15 +4,15 @@ import { ShirtType } from "@/lib/textures";
 // import { useShirtSectionTextures } from "@/lib/useTextures";
 // import { createMaterials } from "@/lib/material";
 import { useGSAP } from "@gsap/react";
-import { RefObject, useRef } from "react";
+import { RefObject, useContext, useRef } from "react";
 import gsap from "gsap";
-import { shirtColors } from "@/lib/colors";
 import { useMediaQuery } from "react-responsive";
 import { Phone } from "./Phone";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import FloatingParticles from "./FloatingParticles";
 import BGLights from "./BGLights";
 import Mise from "./Mise";
+import { LayoutRefContext } from "@/app/layout";
 
 type GLTFResult = {
   nodes: {
@@ -20,7 +20,6 @@ type GLTFResult = {
   };
 };
 export function SecondModel({
-  shirtType,
   htmlRef,
 }: {
   shirtType: ShirtType;
@@ -43,6 +42,8 @@ export function SecondModel({
   // const marqueeText2Ref = useRef<THREE.Mesh>(null);
   // const marqueeText2DupRef = useRef<THREE.Mesh>(null);
 
+  const { tl } = useContext(LayoutRefContext);
+
   const groupRef = useRef<THREE.Group>(null);
   const mobileRef = useRef<THREE.Group>(null);
   const logoRef = useRef<THREE.Mesh>(null);
@@ -50,7 +51,7 @@ export function SecondModel({
   const textsRef = useRef<THREE.Group>(null);
   const boxMaterialsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 
-  const getTextColor = () => shirtColors[shirtType]?.text ?? "black";
+  // const getTextColor = () => shirtColors[shirtType]?.text ?? "black";
   const textsMaterial = new THREE.MeshBasicMaterial({
     color: "white",
     transparent: true,
@@ -69,7 +70,8 @@ export function SecondModel({
 
   useGSAP(() => {
     if (!groupRef.current) return;
-    gsap
+    if (!tl) return;
+    tl.current = gsap
       .timeline({
         scrollTrigger: {
           trigger: "#second-section",
@@ -98,7 +100,7 @@ export function SecondModel({
       .to(textsMaterial, { opacity: 0, duration: 0.05 }, "<")
       // .to(marqueeMaterial, { opacity: 0.1, duration: 0.05 }, "<")
       // .to(groupRef.current.position, { y: 0.7 })
-
+      .addLabel("contact")
       .add(animateTexts(textsRef).duration(0.5), 0)
       .to(htmlRef.current, {
         top: -htmlRef.current!.offsetHeight + innerHeight,
