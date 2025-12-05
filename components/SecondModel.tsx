@@ -215,7 +215,7 @@ export function SecondModel({
           />
         </mesh> */}
 
-        <group ref={textsRef}>
+        <group scale={1.25} ref={textsRef}>
           {Object.entries(nodes)
             .filter(
               ([key]) =>
