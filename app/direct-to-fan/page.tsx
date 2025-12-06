@@ -31,7 +31,7 @@ const Page = () => {
             Fans download <span className="font-semibold">YOUR</span> app, not
             another social media or “tech platform”.
           </p>
-          <div className="badge mt-5 flex items-center justify-center gap-2 ">
+          <div className="badge mt-5 flex flex-col md:flex-row items-center justify-center gap-2 ">
             <Image
               className="h-16 w-fit object-contain"
               src="/badge/googleplay.png"
