@@ -5,6 +5,7 @@ const Form = () => {
     firstName: "",
     lastName: "",
     email: "",
+    igOrTiktok: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,20 @@ const Form = () => {
             onChange={handleChange}
             className="w-full rounded-md border border-[#2a2a2a] bg-[#1c1c1c] p-3 text-white focus:ring-2 focus:ring-white focus:outline-none"
             placeholder="Email"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm text-gray-400">
+            Instagram / Tiktok Handle
+          </label>
+          <input
+            type="text"
+            name="igOrTiktok"
+            value={formData.igOrTiktok}
+            onChange={handleChange}
+            className="w-full rounded-md border border-[#2a2a2a] bg-[#1c1c1c] p-3 text-white focus:ring-2 focus:ring-white focus:outline-none"
+            placeholder="@"
           />
         </div>
 

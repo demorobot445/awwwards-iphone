@@ -4,7 +4,7 @@ import { ShirtType } from "@/lib/textures";
 // import { useShirtSectionTextures } from "@/lib/useTextures";
 // import { createMaterials } from "@/lib/material";
 import { useGSAP } from "@gsap/react";
-import { RefObject, useContext, useRef } from "react";
+import { useContext, useRef } from "react";
 import gsap from "gsap";
 import { useMediaQuery } from "react-responsive";
 import { Phone } from "./Phone";
@@ -101,7 +101,7 @@ export function SecondModel({
       // .to(marqueeMaterial, { opacity: 0.1, duration: 0.05 }, "<")
       // .to(groupRef.current.position, { y: 0.7 })
       .addLabel("contact")
-      .add(animateTexts(textsRef).duration(0.5), 0)
+      // .add(animateTexts(textsRef).duration(0.5), 0)
       .to(htmlRef.current, {
         top: -htmlRef.current!.offsetHeight + innerHeight,
       })
@@ -110,26 +110,26 @@ export function SecondModel({
 
   const particlesMaterialRef = useRef<THREE.MeshStandardMaterial | null>(null);
 
-  const animateTexts = (textsRef: RefObject<THREE.Group | null>) => {
-    if (!textsRef.current) return gsap.timeline();
-    const meshes = textsRef.current.children as THREE.Mesh[];
+  // const animateTexts = (textsRef: RefObject<THREE.Group | null>) => {
+  //   if (!textsRef.current) return gsap.timeline();
+  //   const meshes = textsRef.current.children as THREE.Mesh[];
 
-    const tl = gsap.timeline();
-    meshes.forEach((mesh, i) => {
-      tl.from(
-        mesh.scale,
-        { x: 0, y: 0, z: 0, duration: 1, ease: "circ.out" },
-        i * 0.1
-      );
-      tl.from(
-        mesh.position,
-        { y: "+=0.04", duration: 1, ease: "back.out" },
-        i * 0.1
-      );
-    });
+  //   const tl = gsap.timeline();
+  //   meshes.forEach((mesh, i) => {
+  //     tl.from(
+  //       mesh.scale,
+  //       { x: 0, y: 0, z: 0, duration: 1, ease: "circ.out" },
+  //       i * 0.1
+  //     );
+  //     tl.from(
+  //       mesh.position,
+  //       { y: "+=0.04", duration: 1, ease: "back.out" },
+  //       i * 0.1
+  //     );
+  //   });
 
-    return tl;
-  };
+  //   return tl;
+  // };
 
   //marquee animation
   // useGSAP(() => {
@@ -169,7 +169,12 @@ export function SecondModel({
 
   return (
     <>
-      <Plane ref={logoRef} position-y={0.7} scale={0.8} args={[1.5, 0.33]}>
+      <Plane
+        ref={logoRef}
+        position-y={0.85}
+        scale={isMobile ? 0.7 : 0.8}
+        args={[1.5, 0.33]}
+      >
         <meshBasicMaterial
           ref={logoMatRef}
           map={useTexture("/full-logo.png")}
@@ -199,7 +204,7 @@ export function SecondModel({
 
         <group
           ref={mobileRef}
-          position={[0, 0.25, 0]}
+          position={[0, isMobile ? 0.45 : 0.3, 0]}
           rotation={[Math.PI * 0.45, -Math.PI * 0.08, Math.PI * 0.82]}
           scale={4}
           dispose={null}
@@ -215,7 +220,7 @@ export function SecondModel({
           />
         </mesh> */}
 
-        <group scale={1.25} ref={textsRef}>
+        <group rotation-y={Math.PI * 0.15} scale={1.25} ref={textsRef}>
           {Object.entries(nodes)
             .filter(
               ([key]) =>

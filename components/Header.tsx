@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState } from "react";
+import { Instagram, Linkedin, Tiktok, Twitter } from "./Icons";
 
 const Header = () => {
   const router = useRouter();
@@ -72,6 +73,32 @@ const Header = () => {
               </button>
             </div>
           </div>
+        </div>
+        <div className="grid absolute right-8 grid-cols-4 gap-3">
+          <Link
+            className="size-6 text-white"
+            href="https://www.instagram.com/getcliqueapps?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr"
+            target="_blank"
+          >
+            <Instagram />
+          </Link>
+          <Link
+            className="size-6 text-white"
+            href="https://www.tiktok.com/@getcliqueapps?_r=1&_t=ZP-922HZWWmOb9"
+            target="_blank"
+          >
+            <Tiktok />
+          </Link>
+          <Link
+            className="size-6 text-white"
+            href="https://x.com/getcliqueapps?s=21"
+            target="_blank"
+          >
+            <Twitter />
+          </Link>
+          <Link className="size-6 text-white" href="#">
+            <Linkedin />
+          </Link>
         </div>
         {/* <MusicStreamLine color={"bg-white"} /> */}
       </div>
