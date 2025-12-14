@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import React from "react";
 import { Plane, useGLTF, useTexture } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 
@@ -10,9 +9,7 @@ type GLTFResult = GLTF & {
     Cube010_2: THREE.Mesh;
     Cube010_3: THREE.Mesh;
     Cube010_4: THREE.Mesh;
-    Cube003: THREE.Mesh;
-    Cube003_1: THREE.Mesh;
-    Cube003_2: THREE.Mesh;
+    Back_glass: THREE.Mesh;
     Cylinder: THREE.Mesh;
     Cylinder_1: THREE.Mesh;
     Cylinder_2: THREE.Mesh;
@@ -50,14 +47,13 @@ type GLTFResult = GLTF & {
     ["Camera filter"]: THREE.MeshStandardMaterial;
     LED: THREE.MeshStandardMaterial;
     ["Frosted glass"]: THREE.MeshStandardMaterial;
-    ["Tint back glass"]: THREE.MeshStandardMaterial;
-    Glass: THREE.MeshStandardMaterial;
     Frame: THREE.MeshStandardMaterial;
     Lens: THREE.MeshStandardMaterial;
     ["Sapphire miror"]: THREE.MeshStandardMaterial;
     ["Mirror filter"]: THREE.MeshStandardMaterial;
     ["Plastic LED"]: THREE.MeshStandardMaterial;
     ["Metal Screw"]: THREE.MeshStandardMaterial;
+    Glass: THREE.MeshStandardMaterial;
     Display: THREE.MeshStandardMaterial;
   };
 };
@@ -123,7 +119,7 @@ export function Phone() {
         geometry={nodes.Speaker_mesh.geometry}
         material={materials["Metal Screw"]}
       />
-      <mesh
+      {/* <mesh
         geometry={nodes.Cube003.geometry}
         material={materials["Frosted glass"]}
       />
@@ -131,7 +127,11 @@ export function Phone() {
         geometry={nodes.Cube003_1.geometry}
         material={materials["Tint back glass"]}
       />
-      <mesh geometry={nodes.Cube003_2.geometry} material={materials.Glass} />
+      <mesh geometry={nodes.Cube003_2.geometry} material={materials.Glass} /> */}
+      <mesh
+        geometry={nodes.Back_glass.geometry}
+        material={materials["Frosted glass"]}
+      />
       <mesh geometry={nodes.Cylinder.geometry} material={materials.Aluminum} />
       <mesh geometry={nodes.Cylinder_1.geometry} material={materials.Frame} />
       <mesh

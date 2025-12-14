@@ -30,7 +30,7 @@ const Form = () => {
             Create your app
           </h1>
           <p className="text-sm text-gray-400">
-            Let&aspos;s get started building your world
+            Let&apos;s get started building your world
           </p>
         </div>
 
