@@ -88,7 +88,7 @@ export function SecondModel({
       .to(logoMatRef.current, { opacity: 0, duration: 0.2 }, "<")
       .to(groupRef.current.rotation, { x: 0, duration: 0.2 }, "<")
       .to(groupRef.current.position, { y: 0.7, duration: 0.8 }, "<")
-      .to(groupRef.current.rotation, { y: -Math.PI * 3, duration: 0.8 }, "<")
+      .to(groupRef.current.rotation, { y: -Math.PI * 2, duration: 0.8 }, "<")
       .to(boxMaterialsRef.current, {
         opacity: 0,
         emissiveIntensity: 0,
@@ -220,7 +220,12 @@ export function SecondModel({
           />
         </mesh> */}
 
-        <group rotation-y={Math.PI * 0.15} scale={1.25} ref={textsRef}>
+        <group
+          position-y={isMobile ? -0.2 : 0.05}
+          rotation-y={Math.PI * 0.3}
+          scale={1.25}
+          ref={textsRef}
+        >
           {Object.entries(nodes)
             .filter(
               ([key]) =>
