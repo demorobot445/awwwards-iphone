@@ -83,7 +83,12 @@ export function SecondModel({
         },
       })
       .to(mobileRef.current!.position, { y: 0 })
-      .to(mobileRef.current!.rotation, { x: 0, y: 0, z: 0 }, "<")
+      .to(textsRef.current!.position, { y: isMobile ? 0 : 0.05 }, "<")
+      .to(
+        mobileRef.current!.rotation,
+        { x: 0, y: isMobile ? 0.2 : 0, z: 0 },
+        "<"
+      )
       .to(logoRef.current!.scale, { x: 0, y: 0, z: 0, duration: 0.2 }, "<")
       .to(logoMatRef.current, { opacity: 0, duration: 0.2 }, "<")
       .to(groupRef.current.rotation, { x: 0, duration: 0.2 }, "<")
@@ -188,7 +193,7 @@ export function SecondModel({
         dispose={null}
         scale={isMobile ? 1.5 : 2.2}
         rotation={[Math.PI / 8, Math.PI / 3, 0]}
-        position-y={-0.1}
+        position-y={isMobile ? 0.8 : -0.1}
       >
         <EffectComposer>
           <Bloom
@@ -204,7 +209,7 @@ export function SecondModel({
 
         <group
           ref={mobileRef}
-          position={[0, isMobile ? 0.45 : 0.3, 0]}
+          position={[0, isMobile ? -0.2 : 0.3, 0]}
           rotation={[Math.PI * 0.45, -Math.PI * 0.08, Math.PI * 0.82]}
           scale={4}
           dispose={null}
@@ -221,7 +226,7 @@ export function SecondModel({
         </mesh> */}
 
         <group
-          position-y={isMobile ? -0.2 : 0.05}
+          position-y={isMobile ? -1 : 0.05}
           rotation-y={Math.PI * 0.3}
           scale={1.25}
           ref={textsRef}

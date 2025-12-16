@@ -27,7 +27,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="fixed hidden z-10 md:flex justify-between items-center w-full md:pt-6 pt-3 md:px-8 px-5">
+      <div className="fixed hidden z-30 md:flex justify-between items-center w-full md:pt-6 pt-3 md:px-8 px-5">
         <div className="flex items-center gap-16">
           <Link href="/">
             <Image
